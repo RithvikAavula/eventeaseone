@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vitarka Event Registration</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://kit.fontawesome.com/d158d880de.js" crossorigin="anonymous"></script>
+
+  <style>
+    body { background: #f4f7f9; font-family: 'Segoe UI', sans-serif; }
+    .card { border-radius: 1rem; box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1); }
+    .form-label { font-weight: 500; }
+    #successAlert, #errorAlert { display: none; }
+    .spinner-border { display: none; margin-left: 8px; width: 1rem; height: 1rem; }
+  </style>
+</head>
+<body>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card p-4">
+        <h2 class="text-center mb-4">Vitarka Event Registration</h2>
+
+        <div id="successAlert" class="alert alert-success fade" role="alert">
+          🎉 Registration successful! Confirmation email sent.
+        </div>
+
+        <div id="errorAlert" class="alert alert-danger fade" role="alert">
+          ❌ Something went wrong during registration.
+        </div>
+
+        <div id="formContainer"></div>
+        </div>
+        <a href="Rmenu.html">
+          <button class="custom-button" onclick="display('sectionbanner')">Back</button>
+          </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const CLUB_NAME = "Vitarka"; // Set the club name once to use dynamically
+
+  function createRegistrationForm() {
+    const formContainer = document.getElementById("formContainer");
+
+    const form = document.createElement("form");
+    form.id = "registrationForm";
+
+    form.innerHTML = `
+      <div class="mb-3">
+        <label for="FullName" class="form-label">Full Name</label>
+        <input type="text" class="form-control" id="FullName" name="FullName" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="StudentID" class="form-label">Student ID</label>
+        <input type="text" class="form-control" id="StudentID" name="StudentID" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="Email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="Email" name="Email" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="Phone_Number" class="form-label">Phone Number</label>
+        <input type="text" class="form-control" id="Phone_Number" name="Phone_Number" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="Department" class="form-label">Department</label>
+        <input type="text" class="form-control" id="Department" name="Department" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="Section" class="form-label">Section</label>
+        <input type="text" class="form-control" id="Section" name="Section" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="Year" class="form-label">Year</label>
+        <input type="number" class="form-control" id="Year" name="Year" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="event" class="form-label">Select Event</label>
+        <select class="form-select" id="event" name="EventID" required>
+          <option value="">-- Select an Event --</option>
+        </select>
+      </div>
+
+      <input type="hidden" id="EventName" name="EventName" />
+
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary" id="submitBtn">
+          Register
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        </button>
+      </div>
+    `;
+
+    formContainer.appendChild(form);
+  }
+
+  function fetchEvents() {
+    fetch(`http://localhost:3000/events/${CLUB_NAME}`)
+      .then(res => res.json())
+      .then(events => {
+        const dropdown = document.getElementById("event");
+        dropdown.innerHTML = '<option value="">-- Select an Event --</option>';
+
+        events.forEach(event => {
+          const option = document.createElement("option");
+          option.value = event.EventID;
+          option.textContent = event.EventName;
+          option.dataset.name = event.EventName;
+          dropdown.appendChild(option);
+        });
+
+        dropdown.addEventListener("change", () => {
+          const selected = dropdown.options[dropdown.selectedIndex];
+          document.getElementById("EventName").value = selected.dataset.name || "";
+        });
+      })
+      .catch(error => {
+        console.error("❌ Error loading events:", error);
+        showAlert("error", "Failed to load events.");
+      });
+  }
+
+  function attachFormEventListener() {
+    const form = document.getElementById("registrationForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const spinner = submitBtn.querySelector(".spinner-border");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      submitBtn.disabled = true;
+      spinner.style.display = "inline-block";
+
+      const formData = new FormData(form);
+      const data = {};
+      formData.forEach((value, key) => {
+        data[key] = value.trim();
+      });
+
+      fetch(`http://localhost:3000/registrations/${CLUB_NAME}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+        .then(async (response) => {
+          spinner.style.display = "none";
+          submitBtn.disabled = false;
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || "Something went wrong.");
+          }
+
+          return response.json();
+        })
+        .then(res => {
+          showAlert("success");
+          form.reset();
+        })
+        .catch(err => {
+          console.error("❌ Error:", err);
+          showAlert("error", err.message);
+        });
+    });
+  }
+
+  function showAlert(type, msg = "") {
+    const successAlert = document.getElementById("successAlert");
+    const errorAlert = document.getElementById("errorAlert");
+
+    if (type === "success") {
+      successAlert.style.display = "block";
+      successAlert.classList.add("show");
+      errorAlert.style.display = "none";
+    } else {
+      errorAlert.innerText = msg || "❌ Registration failed.";
+      errorAlert.style.display = "block";
+      errorAlert.classList.add("show");
+      successAlert.style.display = "none";
+    }
+
+    setTimeout(() => {
+      successAlert.style.display = "none";
+      successAlert.classList.remove("show");
+      errorAlert.style.display = "none";
+      errorAlert.classList.remove("show");
+    }, 5000);
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    createRegistrationForm();
+    fetchEvents();
+    setTimeout(attachFormEventListener, 300);
+  });
+</script>
+
+</body>
+</html>

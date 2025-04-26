@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/d158d880de.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+    <div id="sectioncodingstudioevents">
+        <h1>Events for Coding Studio</h1>
+        <div id="codingstudioEventsContainer"></div>
+    </div>
+
+    <script>
+        function fetchClubEvents(club) {
+            console.log("Fetching events for", club); // Debug log
+            fetch(`http://localhost:3000/events/${club}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(events => {
+                const eventContainer = document.getElementById(`${club.toLowerCase()}EventsContainer`);
+                document.getElementById('sectioncodingstudioevents').style.display = 'block'; // Make section visible
+
+                if (!eventContainer) {
+                    console.error(`Container not found: ${club.toLowerCase()}EventsContainer`);
+                    return;
+                }
+
+                eventContainer.innerHTML = ""; // Clear previous events
+
+                if (events.length === 0) {
+                    eventContainer.innerHTML = `<p>No events available for ${club}.</p>`;
+                    return;
+                }
+
+                const row = document.createElement("div");
+                row.classList.add("row");
+
+                events.forEach(event => {
+                    const eventCard = document.createElement("div");
+                    eventCard.classList.add("col-12", "col-md-4", "mb-4");
+
+                    eventCard.innerHTML = `
+                    <div class="card h-100 shadow-sm">
+                        <img src="vitarka.jpeg" class="card-img-top" alt="Vitarka Logo" style="max-height: 150px; object-fit: contain; background-color: #f8f9fa; padding: 10px;">
+                        <div class="card-body">
+                            <h5 class="card-title">${event.EventName || 'No Event Name'}</h5>
+                            <p class="card-text">${event.Description || 'No Description Available'}</p>
+                            <p><strong>Date:</strong> ${event.EventDate || 'N/A'}</p>
+                            <p><strong>Start Time:</strong> ${event.StartTime || 'N/A'}</p>
+                            <p><strong>End Time:</strong> ${event.EndTime || 'N/A'}</p>
+                            <p><strong>Location:</strong> ${event.Location || 'N/A'}</p>
+                            <p><strong>Total Seats:</strong> ${event.TotalSeats || 'N/A'}</p>
+                            <a href="studioregistration.html" class="btn btn-primary">Register</a>
+                        </div>
+                    </div>
+                    <a href="Emenu.html">
+                    <button class="custom-button" onclick="display('sectionbanner')">Back</button>
+                    </a>
+                    `;
+
+                    row.appendChild(eventCard);
+                });
+
+                eventContainer.appendChild(row);
+            })
+            .catch(error => {
+                console.error('Error fetching events:', error);
+            });
+        }
+
+        // Call for Coding Studio
+        fetchClubEvents('codingstudio');
+    </script>
+
+    <script type="text/javascript" src="https://d1tgh8fmlzexmh.cloudfront.net/ccbp-static-website/js/ccbp-ui-kit.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

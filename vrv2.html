@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/d158d880de.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="styles2.css"/>
+</head>
+<body>
+<div id="sectionviewregistrations">
+    <div class="wcu-section pt-5 pb-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="wcu-section-heading">View Registrations</h1>
+                    <p class="wcu-section-description">
+                        View all registrations for events.
+                    </p>
+                    <table id="registrationsTable" border="1">
+                      <thead>
+                          <tr>
+                              <th>Student ID</th>
+                              <th>Full Name</th>
+                              <th>Department</th>
+                              <th>Year</th>
+                              <th>Section</th>
+                              <th>Email</th>
+                              <th>Phone Number</th>
+                              <th>Event Name</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <!-- Registrations will be dynamically inserted here -->
+                      </tbody>
+                  </table>
+                  <a href="studio.html">
+                  <button class="custom-button">Back</button>
+                </a>
+                <script>
+                  function fetchRegistrations(clubName) {
+fetch(`http://localhost:3000/registrations/${clubName}`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(registrations => {
+        const tableBody = document.querySelector("#registrationsTable tbody");
+        tableBody.innerHTML = "";
+
+        if (registrations.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="8">No registrations available for ${clubName}.</td></tr>`;
+            return;
+        }
+
+        registrations.forEach(reg => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${reg.StudentID}</td>
+                <td>${reg.FullName}</td>
+                <td>${reg.Department}</td>
+                <td>${reg.Year}</td>
+                <td>${reg.Section}</td>
+                <td>${reg.Email}</td>
+                <td>${reg.Phone_Number}</td>
+                <td>${reg.EventName}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    })
+    .catch(error => {
+        console.error(`Error fetching registrations for ${clubName}:`, error);
+    });
+}
+
+// Example: Fetch registrations for 'Vitarka' on page load
+document.addEventListener('DOMContentLoaded', () => {
+const clubName = "codingstudio"; // Change this dynamically based on admin's selected club
+fetchRegistrations(clubName);
+});
+
+
+                </script>  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </body>
+</html>
