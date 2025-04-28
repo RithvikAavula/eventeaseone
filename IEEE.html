@@ -32,8 +32,8 @@
     <div id="sectionbanner">
         <div class="banner-section-bg-container d-flex justify-content-center flex-column">
             <div class="text-center">
-                <h1 class="banner-heading mb-3">Register For Your Event</h1>
-                <p class="banner-caption mb-4">Enjoy Your Event</p>
+                <h1 class="banner-heading mb-3">Here are IEEE Events</h1>
+                <p class="banner-caption mb-4">Register for Your Event</p>
                 <button class="custom-button" onclick="display('sectionexploremenu')">View Events</button>
                 <a href="IEEEregistration.html">
                     <button class="custom-outline-button">Register Now</button>
@@ -82,8 +82,10 @@
                 eventCard.innerHTML = `
                 <div class="card h-100 shadow-sm">
                     <!-- Vitarka Logo Section -->
-                    <img src="vitarka.jpeg" class="card-img-top" alt="Vitarka Logo" style="max-height: 150px; object-fit: contain; background-color: #f8f9fa; padding: 10px;">
-            
+                    <a href="https://vbithyd.ac.in/ieee-student-branch-of-vbit/">
+                    <img src="ieee-vbit-sb.png" class="card-img-top" alt="ieee-vbit-sb Logo" style="max-height: 150px; object-fit: contain; background-color: #f8f9fa; padding: 10px;">
+                    </a>
+
                     <div class="card-body">
                         <h5 class="card-title">${event.EventName || 'No Event Name'}</h5>
                         <p class="card-text">${event.Description || 'No Description Available'}</p>
@@ -95,7 +97,6 @@
                         <a href="IEEEregistration.html" class="btn btn-primary">Register</a>
                     </div>
                 </div>
-                <button class="custom-button" onclick="display('sectionbanner')">Back</button>
                 `;
 
                 row.appendChild(eventCard); // Append each card to the row
@@ -111,8 +112,11 @@
             // Call for Coding Studio
             fetchClubEvents('IEEE');
         </script>
+    </div>
+    <a href="IEEE.html">
+        <button class="custom-button" onclick="display('sectionbanner')">Back</button>
+        </a>
         <script type="text/javascript" src="https://d1tgh8fmlzexmh.cloudfront.net/ccbp-static-website/js/ccbp-ui-kit.js"></script>
         <script src="script.js"></script>
-    </div>
 </body>
 </html>
