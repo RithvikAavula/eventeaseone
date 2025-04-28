@@ -52,7 +52,9 @@
 
                     eventCard.innerHTML = `
                     <div class="card h-100 shadow-sm">
-                        <img src="vitarka.jpeg" class="card-img-top" alt="Vitarka Logo" style="max-height: 150px; object-fit: contain; background-color: #f8f9fa; padding: 10px;">
+                        <a href="https://vbithyd.ac.in/ieee-student-branch-of-vbit/">
+                    <img src="ieee-vbit-sb.png" class="card-img-top" alt="ieee-vbit-sb Logo" style="max-height: 150px; object-fit: contain; background-color: #f8f9fa; padding: 10px;">
+                    </a>
                         <div class="card-body">
                             <h5 class="card-title">${event.EventName || 'No Event Name'}</h5>
                             <p class="card-text">${event.Description || 'No Description Available'}</p>
@@ -64,9 +66,9 @@
                             <a href="IEEEregistration.html" class="btn btn-primary">Register</a>
                         </div>
                     </div>
-                    <a href="Emenu.html">
-                    <button class="custom-button" onclick="display('sectionbanner')">Back</button>
-                    </a>
+                    <a href="index.html">
+    <button class="custom-button" onclick="display('sectionbanner')">Back</button>
+    </a>
                     `;
 
                     row.appendChild(eventCard);
@@ -82,6 +84,7 @@
         // Call for IEEE
         fetchClubEvents('IEEE');
     </script>
+
 
     <script type="text/javascript" src="https://d1tgh8fmlzexmh.cloudfront.net/ccbp-static-website/js/ccbp-ui-kit.js"></script>
     <script src="script.js"></script>
